@@ -534,6 +534,18 @@ ConsoleJS.STARTUP.error(
 
 而且 `addOre(...)`、`addLake(...)` 等方法在这一版本里会直接 `return`。如果世界生成脚本在 `1.20.1` 完全没有效果，应先排除这一限制。
 
+### `Math` 常量有时会是 `undefined` {#MathConstantsUndefined}
+
+`NativeMath` 初始化时会是 `findPrototypeId` 把方法和常量的内部 ID 都放入 `prototypeValues`，但 `findPrototypeId` 只加了方法没加常量：
+
+```java
+if (method.m_146815_().equals(name)) {
+    return method.m_146812_();
+}
+```
+
+而常量初始化走的是另一条路，所以永远无法被找到。如果遇到 `Math.PI`、`Math.E` 等结果是 `undefined`，应使用 `KMath` 代替。!!听起来很奇怪对吧但这是真的!!
+
 ## 兼容性提醒 {#ExperienceNotes}
 
 :::: alert {"type":"info","title":"这一节的定位","variant":"outlined","border":"start"}
